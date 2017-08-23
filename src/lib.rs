@@ -20,15 +20,18 @@ mod controllers;
 use log::LogLevelFilter;
 use hyper::server::Http;
 use gotham::handler::NewHandlerService;
+use std::env;
 
 use boot::router::router;
 
 pub fn start() {
     set_logging();
+    let address = env::var("ADDRESS").unwrap_or("127.0.0.1".into());
     // Message recieved @ag_dubs!
     //
     // https://twitter.com/ag_dubs/status/852559264510070784
-    let addr = "127.0.0.1:7878".parse().unwrap();
+    let port = env::var("PORT").unwrap_or("7878".into());
+    let addr = format!("{}:{}", address, port).parse().unwrap();
 
     let server = Http::new()
         .bind(&addr, NewHandlerService::new(router()))
